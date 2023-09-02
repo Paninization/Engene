@@ -41,8 +41,8 @@ public class PhysicsSystem extends IteratingSystem implements ContactListener {
         TransformComponent transformComponent;
         B2dBodyComponent bodyComponent;
         for(Entity entity : bodiesQueue){
-            transformComponent = entity.getComponent(TransformComponent.class);
-            bodyComponent = entity.getComponent(B2dBodyComponent.class);
+            transformComponent = tm.get(entity);
+            bodyComponent = bm.get(entity);
             Vector2 position = bodyComponent.body.getPosition();
             transformComponent.position.x = position.x;
             transformComponent.position.y = position.y;

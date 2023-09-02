@@ -25,3 +25,10 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+jar{
+    archivesBaseName = 'engene'
+    manifest {
+        attributes 'Main-Class': 'org.gattolfo.engen.Main'
+    }
+}
