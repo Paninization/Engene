@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.gattolfo.engen'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+
+}
+
+
+dependencies {
+    implementation 'org.jetbrains:annotations:24.0.0'
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation "com.badlogicgames.ashley:ashley:1.7.3"
+
+    implementation "com.badlogicgames.gdx:gdx-box2d:1.11.0"
+}
+
+test {
+    useJUnitPlatform()
+}
