@@ -7,5 +7,11 @@ public class TextureComponent implements Component {
 
     public TextureRegion region = null;
 
+    public boolean [] flipped = {false,false};
+
+    public void setFlipped(boolean x, boolean y){
+        flipped[0] = x;
+        flipped[1] = y;
+    }
 
 }

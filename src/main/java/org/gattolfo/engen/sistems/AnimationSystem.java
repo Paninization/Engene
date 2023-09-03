@@ -33,6 +33,7 @@ public class AnimationSystem extends IteratingSystem {
         if(ani.animations.containsKey(state.state)){
             TextureComponent tex = tm.get(entity);
             tex.region = (TextureRegion) ani.animations.get(state.state).getKeyFrame(ani.time, ani.isLooping);
+            tex.region.flip(tex.flipped[0],tex.flipped[1]);
         }
 
         ani.time += deltaTime;
