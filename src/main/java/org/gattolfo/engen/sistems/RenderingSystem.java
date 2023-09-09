@@ -51,7 +51,7 @@ public class RenderingSystem extends SortedIteratingSystem {
         camera.update();
 
         batch.setProjectionMatrix(camera.combined);
-        batch.enableBlending();
+
 
         batch.begin();
 

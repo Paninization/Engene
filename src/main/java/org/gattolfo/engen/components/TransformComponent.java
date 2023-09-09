@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector3;
  */
 public class TransformComponent implements Component {
 
-    public final Vector3 position = new Vector3();
+    public final Vector3 position = new Vector3(0,0,0);
     public final Vector2 size = new Vector2(1.0f, 1.0f);
     
     public float rotation = 0.0f;
@@ -19,6 +19,19 @@ public class TransformComponent implements Component {
      * if true, the entity will not be rendered
      */
     public boolean isHidden = false;
+
+    public TransformComponent(){
+
+    }
+
+    public TransformComponent(Vector2 size,Vector3 position){
+        this.size.set(size);
+        this.position.set(position);
+    }
+
+    public TransformComponent(Vector2 size){
+        this.size.set(size);
+    }
 
 
 }

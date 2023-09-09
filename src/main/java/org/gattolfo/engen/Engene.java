@@ -1,15 +1,28 @@
 package org.gattolfo.engen;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
+import org.gattolfo.engen.components.AnimationComponent;
+import org.gattolfo.engen.components.B2dBodyComponent;
+import org.gattolfo.engen.components.TextureComponent;
+import org.gattolfo.engen.components.TransformComponent;
 import org.gattolfo.engen.sistems.AnimationSystem;
 import org.gattolfo.engen.sistems.PhysicsSystem;
 import org.gattolfo.engen.sistems.RenderingSystem;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.SimpleTimeZone;
 
 
 /**
@@ -21,6 +34,16 @@ public class Engene {
 
     @NotNull
     private Engine engine;
+
+    @NotNull
+    private OrthographicCamera camera;
+
+    @NotNull
+    private SpriteBatch batch;
+
+    @NotNull
+    private World world;
+
 
     /**
      *  Set the engine that will be used, Engene is not initialized
@@ -47,6 +70,9 @@ public class Engene {
      */
     public Engene(@NotNull Engine engine, @NotNull SpriteBatch batch, @NotNull OrthographicCamera camera, @NotNull World world){
         this.engine = engine;
+        this.camera = camera;
+        this.world = world;
+        this.batch = batch;
         initializateEngene(batch,camera,world);
     }
 
@@ -59,6 +85,9 @@ public class Engene {
      */
     public Engene(@NotNull SpriteBatch batch,@NotNull OrthographicCamera camera,@NotNull World world){
         engine = new PooledEngine();
+        this.camera = camera;
+        this.batch = batch;
+        this.world = world;
         initializateEngene(batch,camera,world);
     }
 
@@ -70,10 +99,11 @@ public class Engene {
      */
     public void initializateEngene(@NotNull SpriteBatch batch, @NotNull OrthographicCamera camera,@NotNull World world) {
 
+        this.camera = camera;
+
         engine.addSystem(new AnimationSystem());
         engine.addSystem(new RenderingSystem(batch,camera));
         engine.addSystem(new PhysicsSystem(world));
-
     }
 
     /**
@@ -84,6 +114,9 @@ public class Engene {
         return engine;
     }
 
+    public void update(float delta){
+        engine.update(delta);
+    }
     /**
      *
      * @param system the system that you want remove
@@ -93,10 +126,43 @@ public class Engene {
 
     }
 
+    public OrthographicCamera getCamera() {
+        return camera;
+    }
 
+    public SpriteBatch getBatch() {
+        return batch;
+    }
 
+    public World getWorld() {
+        return world;
+    }
 
+    public Entity createReadyEntity(Body body, Vector3 position, Vector2 size, int keyAnim , Animation animation){
+        Entity e = new Entity();
+        e.add(new B2dBodyComponent(body));
+        e.add(new TransformComponent(size,position));
+        e.add(new TextureComponent());
 
+        if(animation!=null){
+            AnimationComponent anComp = new AnimationComponent();
+            anComp.animations.put(keyAnim,animation);
+            e.add(anComp);
+        }
+        return e;
+    }
 
+    public Entity createReadyEntity(Body body, Vector2 size, TextureRegion texture){
+        Entity e = new Entity();
+        e.add(new B2dBodyComponent(body));
+        e.add(new TransformComponent(size));
+        e.add(new TextureComponent());
 
+        if(texture!=null){
+            TextureComponent textureComponent = new TextureComponent();
+            textureComponent.region = texture;
+            e.add(textureComponent);
+        }
+        return e;
+    }
 }
