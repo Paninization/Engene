@@ -17,7 +17,7 @@ public class RenderingSystem extends SortedIteratingSystem {
 
     private SpriteBatch batch;
     private Array<Entity> renderQueue; //permette di renderizzare immagini una sull'altra
-    private Comparator<Entity> comparator; //permette di sortare le immagini in base alla loro Z position
+    private final Comparator<Entity> comparator = new ZComparator();; //permette di sortare le immagini in base alla loro Z position
 
     private OrthographicCamera camera;
 
@@ -36,10 +36,12 @@ public class RenderingSystem extends SortedIteratingSystem {
 
         this.batch = batch;
         this.camera = camera;
+
     }
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
+
         renderQueue.add(entity);
     }
 

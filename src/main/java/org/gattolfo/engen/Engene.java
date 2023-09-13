@@ -20,6 +20,7 @@ import org.gattolfo.engen.components.TransformComponent;
 import org.gattolfo.engen.sistems.AnimationSystem;
 import org.gattolfo.engen.sistems.PhysicsSystem;
 import org.gattolfo.engen.sistems.RenderingSystem;
+import org.gattolfo.engen.sistems.UpdateSystem;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.SimpleTimeZone;
@@ -100,7 +101,7 @@ public class Engene {
     public void initializateEngene(@NotNull SpriteBatch batch, @NotNull OrthographicCamera camera,@NotNull World world) {
 
         this.camera = camera;
-
+        engine.addSystem(new UpdateSystem());
         engine.addSystem(new AnimationSystem());
         engine.addSystem(new RenderingSystem(batch,camera));
         engine.addSystem(new PhysicsSystem(world));
@@ -156,6 +157,18 @@ public class Engene {
         Entity e = new Entity();
         e.add(new B2dBodyComponent(body));
         e.add(new TransformComponent(size));
+        e.add(new TextureComponent());
+
+        if(texture!=null){
+            TextureComponent textureComponent = new TextureComponent();
+            textureComponent.region = texture;
+            e.add(textureComponent);
+        }
+        return e;
+    }
+    public Entity createReadyEntity(Vector3 position, Vector2 size, TextureRegion texture){
+        Entity e = new Entity();
+        e.add(new TransformComponent(size,position));
         e.add(new TextureComponent());
 
         if(texture!=null){
