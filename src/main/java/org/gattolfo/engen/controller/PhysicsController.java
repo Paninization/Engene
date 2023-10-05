@@ -1,65 +1,10 @@
-package org.gattolfo.engen.sistems;
+package org.gattolfo.engen.controller;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Array;
 import org.gattolfo.engen.components.B2dBodyComponent;
-import org.gattolfo.engen.components.TransformComponent;
-import org.jetbrains.annotations.NotNull;
 
-public class PhysicsSystem extends IteratingSystem implements ContactListener {
-
-    private ComponentMapper<B2dBodyComponent> cm;
-
-    private Array<Entity> bodiesQueue;
-
-    private ComponentMapper<B2dBodyComponent> bm = ComponentMapper.getFor(B2dBodyComponent.class);
-    private ComponentMapper<TransformComponent> tm = ComponentMapper.getFor(TransformComponent.class);
-    @NotNull
-    World world;
-    public PhysicsSystem(@NotNull World world){
-        super(Family.all(B2dBodyComponent.class, TransformComponent.class).get());
-        this.world = world;
-        bodiesQueue = new Array<>();
-
-    }
-    @Override
-    protected void processEntity(Entity entity, float deltaTime) {
-        bodiesQueue.add(entity);
-    }
-
-    @Override
-    public void update(float deltaTime) {
-        super.update(deltaTime);
-
-        world.step(deltaTime,6,2);
-        TransformComponent transformComponent;
-        B2dBodyComponent bodyComponent;
-        for(Entity entity : bodiesQueue){
-            transformComponent = tm.get(entity);
-            bodyComponent = bm.get(entity);
-            Vector2 position = bodyComponent.body.getPosition();
-            transformComponent.position.x = position.x;
-            transformComponent.position.y = position.y;
-            transformComponent.rotation = bodyComponent.body.getAngle() * MathUtils.radiansToDegrees;
-
-        }
-
-        bodiesQueue.clear();
-
-
-    }
-
-    /**
-     * Handles entity and fixture collisions
-     *
-     * @param contact box2d
-     */
+public class PhysicsController implements ContactListener {
     @Override
     public void beginContact(Contact contact) {
         Fixture fa = contact.getFixtureA();
@@ -73,9 +18,7 @@ public class PhysicsSystem extends IteratingSystem implements ContactListener {
             entity = (Entity) fb.getBody().getUserData();
             entityCollision(entity,fa);
         }
-
     }
-
 
     private void entityCollision(Entity e, Fixture f){
 
@@ -89,7 +32,6 @@ public class PhysicsSystem extends IteratingSystem implements ContactListener {
         }
 
     }
-
     private void entityCollisionExit(Entity e,Fixture f){
         B2dBodyComponent entityB2component = e.getComponent(B2dBodyComponent.class);
 
@@ -124,13 +66,5 @@ public class PhysicsSystem extends IteratingSystem implements ContactListener {
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
 
-    }
-
-    public @NotNull World getWorld() {
-        return world;
-    }
-
-    public void setWorld(@NotNull World world) {
-        this.world = world;
     }
 }

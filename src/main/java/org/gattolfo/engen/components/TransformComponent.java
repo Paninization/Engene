@@ -12,7 +12,9 @@ public class TransformComponent implements Component {
 
     public final Vector3 position = new Vector3(0,0,0);
     public final Vector2 size = new Vector2(1.0f, 1.0f);
-    
+
+    public int layer = 0;
+
     public float rotation = 0.0f;
 
     /**
@@ -27,6 +29,20 @@ public class TransformComponent implements Component {
     public TransformComponent(Vector2 size,Vector3 position){
         this.size.set(size);
         this.position.set(position);
+    }
+    public TransformComponent(Vector3 position,int layer){
+        this.layer = layer;
+        this.position.set(position);
+    }
+
+    public TransformComponent(Vector2 size,Vector3 position,int layer){
+        this.size.set(size);
+        this.position.set(position);
+        this.layer = layer;
+    }
+    public TransformComponent(int layer){
+
+        this.layer = layer;
     }
 
     public TransformComponent(Vector2 size){

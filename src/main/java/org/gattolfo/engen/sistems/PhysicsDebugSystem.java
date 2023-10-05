@@ -6,6 +6,7 @@ import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import org.gattolfo.engen.Priority;
 
 public class PhysicsDebugSystem extends IteratingSystem {
 
@@ -15,7 +16,7 @@ public class PhysicsDebugSystem extends IteratingSystem {
     private World world;
     private OrthographicCamera camera;
     public PhysicsDebugSystem(World world, OrthographicCamera camera){
-        super(Family.all().get());
+        super(Family.all().get(), Priority.RENDER_B2D_DEBUG);
 
         debugRenderer = new Box2DDebugRenderer();
         this.world = world;

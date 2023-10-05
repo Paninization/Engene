@@ -10,6 +10,7 @@ public abstract class Script {
         this.entity = entity;
     }
 
+
     public abstract void update(float delta);
 
 }

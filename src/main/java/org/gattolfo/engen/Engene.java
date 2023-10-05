@@ -5,31 +5,29 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-import org.gattolfo.engen.components.AnimationComponent;
-import org.gattolfo.engen.components.B2dBodyComponent;
-import org.gattolfo.engen.components.TextureComponent;
-import org.gattolfo.engen.components.TransformComponent;
-import org.gattolfo.engen.sistems.AnimationSystem;
-import org.gattolfo.engen.sistems.PhysicsSystem;
-import org.gattolfo.engen.sistems.RenderingSystem;
-import org.gattolfo.engen.sistems.UpdateSystem;
+import com.badlogic.gdx.utils.IntMap;
+import org.gattolfo.engen.components.*;
+import org.gattolfo.engen.components.object.Layer;
+import org.gattolfo.engen.sistems.*;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.SimpleTimeZone;
 
 
 /**
  * Engene class, this is where it all starts
  */
 public class Engene {
+
+
+
+    private final int numLayer;
 
 
 
@@ -50,15 +48,17 @@ public class Engene {
      *  Set the engine that will be used, Engene is not initialized
      * @param engine the engine used
      */
-    public Engene(@NotNull Engine engine){
+    public Engene(@NotNull Engine engine,int numLayer){
         this.engine = engine;
+        this.numLayer = numLayer;
     }
 
     /**
      * Create a new Engine for Engene, Engene doesn't initialize
      */
-    public Engene(){
+    public Engene(int numLayer){
         engine = new PooledEngine();
+        this.numLayer = numLayer;
     }
 
     /**
@@ -69,12 +69,14 @@ public class Engene {
      * @param camera Camera that will be used for the render
      * @param world  The physical world that will be used for entity collisions
      */
-    public Engene(@NotNull Engine engine, @NotNull SpriteBatch batch, @NotNull OrthographicCamera camera, @NotNull World world){
+    public Engene(@NotNull Engine engine, @NotNull SpriteBatch batch, @NotNull OrthographicCamera camera, @NotNull World world,int numLayer){
         this.engine = engine;
         this.camera = camera;
         this.world = world;
         this.batch = batch;
+        this.numLayer = numLayer;
         initializateEngene(batch,camera,world);
+
     }
 
     /**
@@ -84,11 +86,12 @@ public class Engene {
      * @param camera Camera that will be used for the render
      * @param world The physical world that will be used for entity collisions
      */
-    public Engene(@NotNull SpriteBatch batch,@NotNull OrthographicCamera camera,@NotNull World world){
+    public Engene(@NotNull SpriteBatch batch,@NotNull OrthographicCamera camera,@NotNull World world,int numLayer){
         engine = new PooledEngine();
         this.camera = camera;
         this.batch = batch;
         this.world = world;
+        this.numLayer = numLayer;
         initializateEngene(batch,camera,world);
     }
 
@@ -103,8 +106,18 @@ public class Engene {
         this.camera = camera;
         engine.addSystem(new UpdateSystem());
         engine.addSystem(new AnimationSystem());
-        engine.addSystem(new RenderingSystem(batch,camera));
-        engine.addSystem(new PhysicsSystem(world));
+        engine.addSystem(new TrasformPhysicsSystem(world));
+
+
+    }
+
+    public AdvancedRenderingSystem setUpRenderSystem(SpriteBatch batch,OrthographicCamera camera, Layer[] layers){
+        AdvancedRenderingSystem ad = new AdvancedRenderingSystem(layers,batch,camera);
+        engine.addSystem(ad);
+        return ad;
+    }
+    public AdvancedRenderingSystem setUpRenderSystem( Layer[] layers){
+        return setUpRenderSystem(batch,camera,layers);
     }
 
     /**
@@ -143,7 +156,7 @@ public class Engene {
         Entity e = new Entity();
         e.add(new B2dBodyComponent(body));
         e.add(new TransformComponent(size,position));
-        e.add(new TextureComponent());
+        e.add(new SpriteComponent(new Sprite()));
 
         if(animation!=null){
             AnimationComponent anComp = new AnimationComponent();
@@ -157,25 +170,15 @@ public class Engene {
         Entity e = new Entity();
         e.add(new B2dBodyComponent(body));
         e.add(new TransformComponent(size));
-        e.add(new TextureComponent());
-
-        if(texture!=null){
-            TextureComponent textureComponent = new TextureComponent();
-            textureComponent.region = texture;
-            e.add(textureComponent);
-        }
+        e.add(new SpriteComponent(new Sprite(texture)));
         return e;
     }
+
     public Entity createReadyEntity(Vector3 position, Vector2 size, TextureRegion texture){
         Entity e = new Entity();
         e.add(new TransformComponent(size,position));
-        e.add(new TextureComponent());
-
-        if(texture!=null){
-            TextureComponent textureComponent = new TextureComponent();
-            textureComponent.region = texture;
-            e.add(textureComponent);
-        }
+        e.add(new SpriteComponent(texture));
         return e;
     }
+
 }
