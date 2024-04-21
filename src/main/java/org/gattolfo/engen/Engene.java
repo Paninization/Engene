@@ -5,17 +5,14 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import org.gattolfo.engen.components.*;
-import org.gattolfo.engen.components.object.Layer;
 import org.gattolfo.engen.sistems.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -105,18 +102,17 @@ public class Engene {
 
         this.camera = camera;
         engine.addSystem(new UpdateSystem());
-        engine.addSystem(new AnimationSystem());
         engine.addSystem(new TrasformPhysicsSystem(world));
 
 
     }
 
-    public AdvancedRenderingSystem setUpRenderSystem(SpriteBatch batch,OrthographicCamera camera, Layer[] layers){
+    public AdvancedRenderingSystem setUpRenderSystem(SpriteBatch batch,OrthographicCamera camera, Array<Stage> layers){
         AdvancedRenderingSystem ad = new AdvancedRenderingSystem(layers,batch,camera);
         engine.addSystem(ad);
         return ad;
     }
-    public AdvancedRenderingSystem setUpRenderSystem( Layer[] layers){
+    public AdvancedRenderingSystem setUpRenderSystem( Array<Stage> layers){
         return setUpRenderSystem(batch,camera,layers);
     }
 
@@ -151,32 +147,9 @@ public class Engene {
         return world;
     }
 
-    public Entity createReadyEntity(Body body, Vector3 position, Vector2 size, int keyAnim , Animation animation){
-        Entity e = new Entity();
-        e.add(new B2dBodyComponent(body));
-        e.add(new TransformComponent(size,position));
-        e.add(new SpriteComponent(new Sprite()));
-
-        if(animation!=null){
-            AnimationComponent anComp = new AnimationComponent();
-            anComp.animations.put(keyAnim,animation);
-            e.add(anComp);
-        }
-        return e;
-    }
-
     public Entity createReadyEntity(Body body, Vector2 size, TextureRegion texture){
         Entity e = new Entity();
         e.add(new B2dBodyComponent(body));
-        e.add(new TransformComponent(size));
-        e.add(new SpriteComponent(new Sprite(texture)));
-        return e;
-    }
-
-    public Entity createReadyEntity(Vector3 position, Vector2 size, TextureRegion texture){
-        Entity e = new Entity();
-        e.add(new TransformComponent(size,position));
-        e.add(new SpriteComponent(texture));
         return e;
     }
 

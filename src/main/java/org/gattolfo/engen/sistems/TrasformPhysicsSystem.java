@@ -10,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import org.gattolfo.engen.Priority;
 import org.gattolfo.engen.components.B2dBodyComponent;
-import org.gattolfo.engen.components.TransformComponent;
+import org.gattolfo.engen.components.ActorComponent;
 import org.jetbrains.annotations.NotNull;
 
 public class TrasformPhysicsSystem extends IteratingSystem {
@@ -20,11 +20,11 @@ public class TrasformPhysicsSystem extends IteratingSystem {
     private Array<Entity> bodiesQueue;
 
     private ComponentMapper<B2dBodyComponent> bm = ComponentMapper.getFor(B2dBodyComponent.class);
-    private ComponentMapper<TransformComponent> tm = ComponentMapper.getFor(TransformComponent.class);
+    private ComponentMapper<ActorComponent> tm = ComponentMapper.getFor(ActorComponent.class);
     @NotNull
     World world;
     public TrasformPhysicsSystem(@NotNull World world){
-        super(Family.all(B2dBodyComponent.class, TransformComponent.class).get(), Priority.UPDATE_PHYSICS);
+        super(Family.all(B2dBodyComponent.class, ActorComponent.class).get(), Priority.UPDATE_PHYSICS);
         this.world = world;
         bodiesQueue = new Array<>();
 
@@ -39,22 +39,15 @@ public class TrasformPhysicsSystem extends IteratingSystem {
         super.update(deltaTime);
 
         world.step(deltaTime,6,2);
-        TransformComponent transformComponent;
+        ActorComponent transformComponent;
         B2dBodyComponent bodyComponent;
         for(Entity entity : bodiesQueue){
             transformComponent = tm.get(entity);
             bodyComponent = bm.get(entity);
             Vector2 position = bodyComponent.body.getPosition();
-            transformComponent.position.x = position.x;
-            transformComponent.position.y = position.y;
-            transformComponent.rotation = bodyComponent.body.getAngle() *MathUtils.radiansToDegrees;
-
-
+            transformComponent.setWorldPosition(position.x,position.y);
         }
-
         bodiesQueue.clear();
-
-
     }
 
 
