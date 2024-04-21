@@ -137,7 +137,6 @@ public class Engene {
      */
     public  void removeSystem(@NotNull EntitySystem system){
         engine.removeSystem(system);
-
     }
 
     public OrthographicCamera getCamera() {
