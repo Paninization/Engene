@@ -22,11 +22,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Engene {
 
-
-
     private final int numLayer;
-
-
 
     @NotNull
     private Engine engine;
