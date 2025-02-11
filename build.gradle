@@ -27,6 +27,15 @@ test {
     useJUnitPlatform()
 }
 
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+
 jar{
     archivesBaseName = 'engene'
     manifest {

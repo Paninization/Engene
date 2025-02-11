@@ -1,0 +1,83 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "org.gattolfo.engen",
+    "module": "Engen",
+    "version": "1.0-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.8"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "Engen-1.0-SNAPSHOT.jar",
+          "url": "Engen-1.0-SNAPSHOT.jar",
+          "size": 21207,
+          "sha512": "97f8962a5ed898c6da0fc4c9358487e706eeb7714561f87d35c4fea7f73c531272194ae6347dd6cf018512e66c8f22c651aaceef1e8a4d9228cd8aaa83535143",
+          "sha256": "177350a29dc5b3ca5503119d597df23e32cb5135e33b095d9ba570ab1a3803f3",
+          "sha1": "897adf3b3b54faa5a22e2b4c7f6508f12940ff7b",
+          "md5": "0ca1f5ac2080c50c164fe6f09d1b3a26"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains",
+          "module": "annotations",
+          "version": {
+            "requires": "24.0.0"
+          }
+        },
+        {
+          "group": "com.badlogicgames.ashley",
+          "module": "ashley",
+          "version": {
+            "requires": "1.7.3"
+          }
+        },
+        {
+          "group": "com.badlogicgames.gdx",
+          "module": "gdx-box2d",
+          "version": {
+            "requires": "1.11.0"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "Engen-1.0-SNAPSHOT.jar",
+          "url": "Engen-1.0-SNAPSHOT.jar",
+          "size": 21207,
+          "sha512": "97f8962a5ed898c6da0fc4c9358487e706eeb7714561f87d35c4fea7f73c531272194ae6347dd6cf018512e66c8f22c651aaceef1e8a4d9228cd8aaa83535143",
+          "sha256": "177350a29dc5b3ca5503119d597df23e32cb5135e33b095d9ba570ab1a3803f3",
+          "sha1": "897adf3b3b54faa5a22e2b4c7f6508f12940ff7b",
+          "md5": "0ca1f5ac2080c50c164fe6f09d1b3a26"
+        }
+      ]
+    }
+  ]
+}
