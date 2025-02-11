@@ -3,7 +3,8 @@ plugins {
     id 'maven-publish'
 }
 
-group = 'org.gattolfo.engen'
+
+group = 'org.gattolfo.Engen'
 version = '1.0-SNAPSHOT'
 
 repositories {
@@ -12,7 +13,7 @@ repositories {
     maven { url "https://oss.sonatype.org/content/repositories/releases/" }
 
 }
-
+apply plugin: 'maven-publish'
 
 dependencies {
     implementation 'org.jetbrains:annotations:24.0.0'
