@@ -81,6 +81,18 @@ public class Engene {
         this.world = world;
         initializateEngene(batch,camera,world);
     }
+    /**
+     *  This constructor creates a new Engine and initializes it for Engene use
+     *
+     * @param batch SpriteBatch that will be used for rendering
+     * @param camera Camera that will be used for the render
+     */
+    public Engene(@NotNull SpriteBatch batch,@NotNull OrthographicCamera camera){
+        engine = new PooledEngine();
+        this.camera = camera;
+        this.batch = batch;
+        initializateEngene(batch,camera,world);
+    }
 
     /**
      * This method initializes the library's base systems, you don't have to run it
