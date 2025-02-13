@@ -41,7 +41,6 @@ public class Engene {
      */
     public Engene(@NotNull Engine engine,int numLayer){
         this.engine = engine;
-        this.numLayer = numLayer;
     }
 
     /**
@@ -49,7 +48,6 @@ public class Engene {
      */
     public Engene(int numLayer){
         engine = new PooledEngine();
-        this.numLayer = numLayer;
     }
 
     /**
