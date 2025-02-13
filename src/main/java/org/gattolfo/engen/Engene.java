@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Engene {
 
-    private final int numLayer;
-
     @NotNull
     private Engine engine;
 
@@ -67,7 +65,6 @@ public class Engene {
         this.camera = camera;
         this.world = world;
         this.batch = batch;
-        this.numLayer = numLayer;
         initializateEngene(batch,camera,world);
 
     }
@@ -84,7 +81,6 @@ public class Engene {
         this.camera = camera;
         this.batch = batch;
         this.world = world;
-        this.numLayer = numLayer;
         initializateEngene(batch,camera,world);
     }
 
@@ -104,7 +100,7 @@ public class Engene {
     }
 
     public AdvancedRenderingSystem setUpRenderSystem(SpriteBatch batch,OrthographicCamera camera, Array<Stage> layers){
-        AdvancedRenderingSystem ad = new AdvancedRenderingSystem(layers,batch,camera);
+        AdvancedRenderingSystem ad = new AdvancedRenderingSystem(batch,camera);
         engine.addSystem(ad);
         return ad;
     }

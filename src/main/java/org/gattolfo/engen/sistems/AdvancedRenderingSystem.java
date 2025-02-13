@@ -4,52 +4,66 @@ import com.badlogic.ashley.core.*;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Array;
 import org.gattolfo.engen.Priority;
 import org.gattolfo.engen.components.*;
 
-public class AdvancedRenderingSystem extends IteratingSystem {
+import java.util.*;
+
+public class AdvancedRenderingSystem extends IteratingSystem{
 
 
-    private final ComponentMapper<ActorComponent> transformMapper;
+    private final ComponentMapper<TransformComponent> transformMapper;
+    private final ComponentMapper<TextureComponent> textureComponent;
 
 
     private SpriteBatch batch;
     private OrthographicCamera camera;
 
-    private final Array<Stage> layerRender;
-
-    public AdvancedRenderingSystem(Array<Stage> layerRender,SpriteBatch batch, OrthographicCamera camera) {
-        super(Family.all(ActorComponent.class, RenderComponent.class).get(), Priority.RENDER);
-        transformMapper = ComponentMapper.getFor(ActorComponent.class);
-        this.layerRender = layerRender;
+    public AdvancedRenderingSystem(SpriteBatch batch, OrthographicCamera camera) {
+        super(Family.all(TransformComponent.class, RenderComponent.class).get(), Priority.RENDER);
+        transformMapper = ComponentMapper.getFor(TransformComponent.class);
+        textureComponent = ComponentMapper.getFor(TextureComponent.class);
         this.batch = batch;
         this.camera = camera;
-
     }
-
-    @Override
-    protected void processEntity(Entity entity, float deltaTime) {
-        //layerRender[transformMapper.get(entity).].addEntity(entity);
-    }
-
-
-
-    private int i;
 
     @Override
     public void update(float deltaTime) {
-        super.update(deltaTime);
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-
-        for (Stage stage : layerRender) {
-            stage.draw();
+        super.update(deltaTime);
+        Entity[] entities = this.getEntities().toArray();
+        Arrays.sort(entities, new Zcomparator());
+        for(Entity entity : entities){
+            TransformComponent transformComponent = transformMapper.get(entity);
+            TextureComponent textureComponent = this.textureComponent.get(entity);
+            batch.draw(
+                    textureComponent.getTexture(),
+                    transformComponent.getWorldPosition().x,
+                    transformComponent.getWorldPosition().y,
+                    textureComponent.getTexture().getWidth() * transformComponent.getScale().x,
+                    textureComponent.getTexture().getHeight() * transformComponent.getScale().y
+            );
         }
     }
 
 
 
+    @Override
+    protected void processEntity(Entity entity, float v) {
+
+
+    }
+
+    class Zcomparator implements Comparator<Entity> {
+
+        @Override
+        public int compare(Entity entity, Entity t1) {
+            TransformComponent transformComponent1 = transformMapper.get(entity);
+            TransformComponent transformComponent2 = transformMapper.get(t1);
+            return Float.compare(transformComponent1.getPosition().z,transformComponent2.getPosition().z);
+        }
+    }
 
 }
+
