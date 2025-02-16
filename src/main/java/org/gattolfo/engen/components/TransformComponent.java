@@ -28,6 +28,7 @@ public class TransformComponent implements Component {
 
     public TransformComponent(Vector3 position,Vector2 parentPosition, Vector2 scale, float rotation){
         this.position = position;
+        this.parentPosition = parentPosition;
         this.scale = scale;
         this.rotation = rotation;
         children = new ArrayList<>();
