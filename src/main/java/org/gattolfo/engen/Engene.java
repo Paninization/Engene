@@ -91,7 +91,18 @@ public class Engene {
         engine = new PooledEngine();
         this.camera = camera;
         this.batch = batch;
-        initializateEngene(batch,camera,world);
+        initializateEngene(batch,camera);
+    }
+
+    /**
+     * This method initializes the library's base systems, you don't have to run it
+     * @param batch SpriteBatch that will be used for rendering
+     * @param camera Camera that will be used for the render
+     */
+    public void initializateEngene(@NotNull SpriteBatch batch, @NotNull OrthographicCamera camera) {
+        this.camera = camera;
+        engine.addSystem(new UpdateSystem());
+        engine.addSystem(new AdvancedRenderingSystem(batch,camera));
     }
 
     /**
