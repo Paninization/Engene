@@ -20,7 +20,7 @@ public class AdvancedRenderingSystem extends IteratingSystem{
     private OrthographicCamera camera;
 
     public AdvancedRenderingSystem(SpriteBatch batch, OrthographicCamera camera) {
-        super(Family.all(TransformComponent.class, RenderComponent.class).get(), Priority.RENDER);
+        super(Family.all(TransformComponent.class, TextureComponent.class).get(), Priority.RENDER);
         transformMapper = ComponentMapper.getFor(TransformComponent.class);
         textureComponent = ComponentMapper.getFor(TextureComponent.class);
         this.batch = batch;
