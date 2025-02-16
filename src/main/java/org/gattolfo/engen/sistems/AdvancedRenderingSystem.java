@@ -34,6 +34,7 @@ public class AdvancedRenderingSystem extends IteratingSystem{
         //super.update(deltaTime);
         Entity[] entities = this.getEntities().toArray(Entity.class);
         Arrays.sort(entities, new Zcomparator());
+        batch.begin();
         for(Entity entity : entities){
             TransformComponent transformComponent = transformMapper.get(entity);
             TextureComponent textureComponent = this.textureComponent.get(entity);
@@ -45,6 +46,7 @@ public class AdvancedRenderingSystem extends IteratingSystem{
                     textureComponent.getTexture().getHeight() * transformComponent.getScale().y
             );
         }
+        batch.end();
     }
 
 
