@@ -31,7 +31,7 @@ public class AdvancedRenderingSystem extends IteratingSystem{
     public void update(float deltaTime) {
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-        super.update(deltaTime);
+        //super.update(deltaTime);
         Entity[] entities = this.getEntities().toArray();
         Arrays.sort(entities, new Zcomparator());
         for(Entity entity : entities){
