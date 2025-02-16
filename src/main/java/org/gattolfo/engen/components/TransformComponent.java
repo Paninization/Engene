@@ -23,6 +23,10 @@ public class TransformComponent implements Component {
     }
 
     public TransformComponent(Vector3 position, Vector2 scale, float rotation){
+        this(new Vector3(),new Vector2(), new Vector2(1,1), 0);
+    }
+
+    public TransformComponent(Vector3 position,Vector2 parentPosition, Vector2 scale, float rotation){
         this.position = position;
         this.scale = scale;
         this.rotation = rotation;
