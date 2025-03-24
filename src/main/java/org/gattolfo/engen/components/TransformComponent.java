@@ -1,79 +1,111 @@
 package org.gattolfo.engen.components;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TransformComponent implements Component {
 
-    private Vector3 position;
-    private Vector2 parentPosition;
-    private Vector2 scale;
-    private float rotation;
+    private Vector2 localPosition;
+    private float localRotation; // Degrees
+    private Vector2 localScale;
 
-    private ArrayList<Entity> children;
+    private Vector2 worldPosition;
+    private float worldRotation;
+    private Vector2 worldScale;
 
-    private boolean hidden = false;
+    private TransformComponent parent;
+    private List<TransformComponent> children;
+    private List<Entity> childrenEntities;
+    private Entity parentEntity;
 
-    public TransformComponent(){
-        this(new Vector3(), new Vector2(1,1), 0);
+    public TransformComponent() {
+        this.localPosition = new Vector2(0, 0);
+        this.localRotation = 0;
+        this.localScale = new Vector2(1, 1);
+
+        this.worldPosition = new Vector2(0, 0);
+        this.worldRotation = 0;
+        this.worldScale = new Vector2(1, 1);
+
+        this.children = new ArrayList<>();
+        this.childrenEntities = new ArrayList<>();
     }
 
-    public TransformComponent(Vector3 position, Vector2 scale, float rotation){
-        this(new Vector3(),new Vector2(), new Vector2(1,1), 0);
+    public void setLocalPosition(Vector2 position) {
+        this.localPosition.set(position);
+        updateTransform();
     }
 
-    public TransformComponent(Vector3 position,Vector2 parentPosition, Vector2 scale, float rotation){
-        this.position = position;
-        this.parentPosition = parentPosition;
-        this.scale = scale;
-        this.rotation = rotation;
-        children = new ArrayList<>();
+    public void setLocalRotation(float rotation) {
+        this.localRotation = rotation;
+        updateTransform();
     }
-    public Vector3 getPosition() {
-        return position;
+
+    public void setLocalScale(Vector2 scale) {
+        this.localScale.set(scale);
+        updateTransform();
     }
-    public Vector2 getScale() {
-        return scale;
-    }
-    public float getRotation() {
-        return rotation;
-    }
-    public void setPosition(Vector3 position) {
-        this.position = position;
-        for(Entity child : children){
-            TransformComponent tr = child.getComponent(TransformComponent.class);
-            if(tr!=null){
-                tr.updateParentPosition(position);
-            }
+
+    public void setParent(Entity parent) {
+        if (!setParent(ComponentMapper.getFor(TransformComponent.class).get(parent))){
+            return;
         }
+        parentEntity = parent;
+        updateTransform();
     }
-    public void setScale(Vector2 scale) {
-        this.scale = scale;
+
+    private boolean setParent(TransformComponent newParent) {
+        if(newParent == null){
+            return false;
+        }
+
+        if (this.parent != null) {
+            this.parent.children.remove(this);
+        }
+
+        this.parent = newParent;
+        newParent.children.add(this);
+
+        return true;
     }
-    public void setRotation(float rotation) {
-        this.rotation = rotation;
-    }
-    public boolean isHidden() {
-        return hidden;
-    }
-    public void setHidden(boolean hidden) {
-        this.hidden = hidden;
+
+    private void updateTransform() {
+        if (parent != null) {
+            // Apply parent's transformations
+            float radians = (float) Math.toRadians(parent.worldRotation);
+            Vector2 rotatedPosition = localPosition.cpy().rotateRad(radians); // LibGDX rotates in radians
+            worldPosition.set(parent.worldPosition).add(rotatedPosition);
+            worldRotation = parent.worldRotation + localRotation;
+            worldScale.set(parent.worldScale).scl(localScale);
+        } else {
+            // Root entity
+            worldPosition.set(localPosition);
+            worldRotation = localRotation;
+            worldScale.set(localScale);
+        }
+
+        // Update all children recursively
+        for (TransformComponent child : children) {
+            child.updateTransform();
+        }
     }
 
     public Vector2 getWorldPosition() {
-        return new Vector2(parentPosition.x + position.x, parentPosition.y+position.y);
+        return worldPosition.cpy(); // Return a copy to avoid modification outside
     }
 
-    private void updateParentPosition(Vector2 parentPosition) {
-        this.parentPosition = parentPosition;
+    public float getWorldRotation() {
+        return worldRotation;
     }
 
-    private void updateParentPosition(Vector3 parentPosition) {
-        this.parentPosition.x = parentPosition.x;
-        this.parentPosition.y = parentPosition.y;
+    public Vector2 getWorldScale() {
+        return worldScale.cpy();
     }
+
 }

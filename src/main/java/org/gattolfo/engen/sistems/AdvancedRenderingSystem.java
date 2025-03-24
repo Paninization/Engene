@@ -14,7 +14,7 @@ public class AdvancedRenderingSystem extends IteratingSystem{
 
     private final ComponentMapper<TransformComponent> transformMapper;
     private final ComponentMapper<TextureComponent> textureComponent;
-
+    private final ComponentMapper<ZlayerComponent> zlayerComponent;
 
     private SpriteBatch batch;
     private OrthographicCamera camera;
@@ -23,6 +23,7 @@ public class AdvancedRenderingSystem extends IteratingSystem{
         super(Family.all(TransformComponent.class, TextureComponent.class).get(), Priority.RENDER);
         transformMapper = ComponentMapper.getFor(TransformComponent.class);
         textureComponent = ComponentMapper.getFor(TextureComponent.class);
+        zlayerComponent = ComponentMapper.getFor(ZlayerComponent.class);
         this.batch = batch;
         this.camera = camera;
     }
@@ -42,8 +43,8 @@ public class AdvancedRenderingSystem extends IteratingSystem{
                     textureComponent.getTexture(),
                     transformComponent.getWorldPosition().x,
                     transformComponent.getWorldPosition().y,
-                    textureComponent.getTexture().getWidth() * transformComponent.getScale().x,
-                    textureComponent.getTexture().getHeight() * transformComponent.getScale().y
+                    textureComponent.getTexture().getWidth() * transformComponent.getWorldScale().x,
+                    textureComponent.getTexture().getHeight() * transformComponent.getWorldScale().y
             );
         }
         batch.end();
@@ -61,9 +62,19 @@ public class AdvancedRenderingSystem extends IteratingSystem{
 
         @Override
         public int compare(Entity entity, Entity t1) {
-            TransformComponent transformComponent1 = transformMapper.get(entity);
-            TransformComponent transformComponent2 = transformMapper.get(t1);
-            return Float.compare(transformComponent1.getPosition().z,transformComponent2.getPosition().z);
+            ZlayerComponent zlayer1 = zlayerComponent.get(entity);
+            ZlayerComponent zlayer2 = zlayerComponent.get(t1);
+            if (zlayer1 == null && zlayer2 == null) {
+                return 0; // Both are null, so they are considered equal.
+            }
+            if (zlayer1 == null) {
+                return -1; // Null values are treated as lower priority.
+            }
+            if (zlayer2 == null) {
+                return 1; // Null values are treated as lower priority.
+            }
+
+            return Float.compare(zlayer1.getZ(), zlayer2.getZ());
         }
     }
 
