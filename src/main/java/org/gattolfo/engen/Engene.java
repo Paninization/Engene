@@ -1,29 +1,20 @@
 package org.gattolfo.engen;
 
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Array;
-import org.gattolfo.engen.components.*;
-import org.gattolfo.engen.sistems.*;
+import org.gattolfo.engen.base.Component;
+import org.gattolfo.engen.base.Entity;
+import org.gattolfo.engen.base.EntityListener;
+import org.gattolfo.engen.base.Family;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
 
 
 /**
  * Engene class, this is where it all starts
  */
-public class Engene {
-
-    @NotNull
-    private Engine engine;
+public class Engene  implements EntityListener {
 
     @NotNull
     private OrthographicCamera camera;
@@ -31,121 +22,62 @@ public class Engene {
     @NotNull
     private SpriteBatch batch;
 
-    @NotNull
-    private World world;
+    private List<Entity> entities;
+    private Set<Family> families;
 
+    private Map<Family, List<Entity>> familyEntities;
 
-    /**
-     *  Set the engine that will be used, Engene is not initialized
-     * @param engine the engine used
-     */
-    public Engene(@NotNull Engine engine,int numLayer){
-        this.engine = engine;
+    public Engene(){
+        entities = new ArrayList<>();
+        families = new HashSet<>();
+        familyEntities = new HashMap<>();
     }
 
-    /**
-     * Create a new Engine for Engene, Engene doesn't initialize
-     */
-    public Engene(int numLayer){
-        engine = new PooledEngine();
+
+    public void addEntity(Entity entity){
+        entities.add(entity);
+        entity.addListener(this);  // per ricevere notifiche di cambi
+        for (Family family : families) {
+            if (family.matches(entity)) {
+                familyEntities.computeIfAbsent(family, f -> new ArrayList<>()).add(entity);
+            }
+        }
     }
 
-    /**
-     * This constructor given a non-null Engine, initializes it for Engene use
-     *
-     * @param engine Engine ashley, which will be used for entity management, systems etc
-     * @param batch SpriteBatch that will be used for rendering
-     * @param camera Camera that will be used for the render
-     * @param world  The physical world that will be used for entity collisions
-     */
-    public Engene(@NotNull Engine engine, @NotNull SpriteBatch batch, @NotNull OrthographicCamera camera, @NotNull World world,int numLayer){
-        this.engine = engine;
-        this.camera = camera;
-        this.world = world;
-        this.batch = batch;
-        initializateEngene(batch,camera,world);
-
+    public void removeEntity(Entity entity) {
+        entities.remove(entity);
+        for (List<Entity> list : familyEntities.values()) {
+            list.remove(entity);
+        }
     }
 
-    /**
-     *  This constructor creates a new Engine and initializes it for Engene use
-     *
-     * @param batch SpriteBatch that will be used for rendering
-     * @param camera Camera that will be used for the render
-     * @param world The physical world that will be used for entity collisions
-     */
-    public Engene(@NotNull SpriteBatch batch,@NotNull OrthographicCamera camera,@NotNull World world,int numLayer){
-        engine = new PooledEngine();
-        this.camera = camera;
-        this.batch = batch;
-        this.world = world;
-        initializateEngene(batch,camera,world);
-    }
-    /**
-     *  This constructor creates a new Engine and initializes it for Engene use
-     *
-     * @param batch SpriteBatch that will be used for rendering
-     * @param camera Camera that will be used for the render
-     */
-    public Engene(@NotNull SpriteBatch batch,@NotNull OrthographicCamera camera){
-        engine = new PooledEngine();
-        this.camera = camera;
-        this.batch = batch;
-        initializateEngene(batch,camera);
+    public List<Entity> getEntitiesForFamily(Family family) {
+        families.add(family);
+        return familyEntities.computeIfAbsent(family, f -> {
+            List<Entity> matched = new ArrayList<>();
+            for (Entity e : entities) {
+                if (f.matches(e)) matched.add(e);
+            }
+            return matched;
+        });
     }
 
-    /**
-     * This method initializes the library's base systems, you don't have to run it
-     * @param batch SpriteBatch that will be used for rendering
-     * @param camera Camera that will be used for the render
-     */
-    public void initializateEngene(@NotNull SpriteBatch batch, @NotNull OrthographicCamera camera) {
-        this.camera = camera;
-        engine.addSystem(new UpdateSystem());
-        engine.addSystem(new AdvancedRenderingSystem(batch,camera));
+    @Override
+    public void onComponentAdded(Entity entity, Class<? extends Component> componentClass) {
+        for (Family family : families) {
+            boolean contains = familyEntities.getOrDefault(family, List.of()).contains(entity);
+            boolean matches = family.matches(entity);
+            if (!contains && matches) {
+                familyEntities.get(family).add(entity);
+            } else if (contains && !matches) {
+                familyEntities.get(family).remove(entity);
+            }
+        }
     }
 
-    /**
-     * This method initializes the library's base systems, you don't have to run it
-     * @param batch SpriteBatch that will be used for rendering
-     * @param camera Camera that will be used for the render
-     * @param world The physical world that will be used for entity collisions
-     */
-    public void initializateEngene(@NotNull SpriteBatch batch, @NotNull OrthographicCamera camera,@NotNull World world) {
-
-        this.camera = camera;
-        engine.addSystem(new UpdateSystem());
-        engine.addSystem(new TrasformPhysicsSystem(world));
-
-
-    }
-
-    public AdvancedRenderingSystem setUpRenderSystem(SpriteBatch batch,OrthographicCamera camera, Array<Stage> layers){
-        AdvancedRenderingSystem ad = new AdvancedRenderingSystem(batch,camera);
-        engine.addSystem(ad);
-        return ad;
-    }
-    public AdvancedRenderingSystem setUpRenderSystem( Array<Stage> layers){
-        return setUpRenderSystem(batch,camera,layers);
-    }
-
-    /**
-     *
-     * @return the Engine used by Engene
-     */
-    public @NotNull Engine getEngine(){
-        return engine;
-    }
-
-    public void update(float delta){
-        engine.update(delta);
-    }
-    /**
-     *
-     * @param system the system that you want remove
-     */
-    public  void removeSystem(@NotNull EntitySystem system){
-        engine.removeSystem(system);
+    @Override
+    public void onComponentRemoved(Entity entity, Class<? extends Component> componentClass) {
+        onComponentAdded(entity, componentClass);
     }
 
     public OrthographicCamera getCamera() {
@@ -154,16 +86,6 @@ public class Engene {
 
     public SpriteBatch getBatch() {
         return batch;
-    }
-
-    public World getWorld() {
-        return world;
-    }
-
-    public Entity createReadyEntity(Body body, Vector2 size, TextureRegion texture){
-        Entity e = new Entity();
-        e.add(new B2dBodyComponent(body));
-        return e;
     }
 
 }

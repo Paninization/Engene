@@ -1,7 +1,7 @@
 {
   "formatVersion": "1.1",
   "component": {
-    "group": "org.gattolfo.engen",
+    "group": "com.github.Paninization",
     "module": "Engen",
     "version": "1.0-SNAPSHOT",
     "attributes": {
@@ -27,11 +27,11 @@
         {
           "name": "Engen-1.0-SNAPSHOT.jar",
           "url": "Engen-1.0-SNAPSHOT.jar",
-          "size": 21207,
-          "sha512": "97f8962a5ed898c6da0fc4c9358487e706eeb7714561f87d35c4fea7f73c531272194ae6347dd6cf018512e66c8f22c651aaceef1e8a4d9228cd8aaa83535143",
-          "sha256": "177350a29dc5b3ca5503119d597df23e32cb5135e33b095d9ba570ab1a3803f3",
-          "sha1": "897adf3b3b54faa5a22e2b4c7f6508f12940ff7b",
-          "md5": "0ca1f5ac2080c50c164fe6f09d1b3a26"
+          "size": 8284,
+          "sha512": "126bb638308235b3083043fef0f34fb7642249fae8160704151b7a31edd4bf8a90415fd47402b48ca994a9b3492886cc4226f4771b1596e2aa9d4afda8692546",
+          "sha256": "7ba309ff67a7a830cf8428a74c303978bfce8d4935d112fde7c26471104b6e40",
+          "sha1": "836cc446da58cc58efc5d281edde4e4018244aed",
+          "md5": "2af7c83aeb94eb20aada76cc511b4be7"
         }
       ]
     },
@@ -53,17 +53,10 @@
           }
         },
         {
-          "group": "com.badlogicgames.ashley",
-          "module": "ashley",
-          "version": {
-            "requires": "1.7.3"
-          }
-        },
-        {
           "group": "com.badlogicgames.gdx",
-          "module": "gdx-box2d",
+          "module": "gdx",
           "version": {
-            "requires": "1.11.0"
+            "requires": "1.13.5"
           }
         }
       ],
@@ -71,11 +64,11 @@
         {
           "name": "Engen-1.0-SNAPSHOT.jar",
           "url": "Engen-1.0-SNAPSHOT.jar",
-          "size": 21207,
-          "sha512": "97f8962a5ed898c6da0fc4c9358487e706eeb7714561f87d35c4fea7f73c531272194ae6347dd6cf018512e66c8f22c651aaceef1e8a4d9228cd8aaa83535143",
-          "sha256": "177350a29dc5b3ca5503119d597df23e32cb5135e33b095d9ba570ab1a3803f3",
-          "sha1": "897adf3b3b54faa5a22e2b4c7f6508f12940ff7b",
-          "md5": "0ca1f5ac2080c50c164fe6f09d1b3a26"
+          "size": 8284,
+          "sha512": "126bb638308235b3083043fef0f34fb7642249fae8160704151b7a31edd4bf8a90415fd47402b48ca994a9b3492886cc4226f4771b1596e2aa9d4afda8692546",
+          "sha256": "7ba309ff67a7a830cf8428a74c303978bfce8d4935d112fde7c26471104b6e40",
+          "sha1": "836cc446da58cc58efc5d281edde4e4018244aed",
+          "md5": "2af7c83aeb94eb20aada76cc511b4be7"
         }
       ]
     }
