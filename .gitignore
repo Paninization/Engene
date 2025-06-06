@@ -1,1 +1,52 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Gradle Daemon logs
+.gradle/daemon/
+.gradle/caches/
+.gradle/logs/
+
+# Gradle Wrapper logs
+gradle/wrapper/gradle-wrapper.properties.lock
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Auto-save files / editor backups
+*.swp
+*.swo
+*~
+*.bak
+*.tmp
+*.orig
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Java class files
 *.class
+
+# Log files
+*.log
+
+# Generated files
+generated/
+
+# Test results
+test-results/
+test-output/
+
+# Optional: ignore Eclipse files if you're switching IDEs
+.project
+.classpath
+.settings/
+
+# Ignore local environment overrides
+local.properties
