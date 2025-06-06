@@ -61,3 +61,7 @@ jar{
         attributes 'Main-Class': 'org.gattolfo.engen.Main'
     }
 }
+
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs << '-Xlint:unchecked'
+}

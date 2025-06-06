@@ -31,12 +31,14 @@ public class Family {
         private Set<Class<? extends Component>> all = new HashSet<>();
         private Set<Class<? extends Component>> exclude = new HashSet<>();
 
-        public Builder all(Class<? extends Component>... componentClasses) {
+        @SafeVarargs
+        public final Builder all(Class<? extends Component>... componentClasses) {
             all.addAll(Arrays.asList(componentClasses));
             return this;
         }
 
-        public Builder exclude(Class<? extends Component>... componentClasses) {
+        @SafeVarargs
+        public final Builder exclude(Class<? extends Component>... componentClasses) {
             exclude.addAll(Arrays.asList(componentClasses));
             return this;
         }
