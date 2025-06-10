@@ -1,20 +1,17 @@
 package org.gattolfo.engen;
 
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import org.gattolfo.engen.base.Component;
-import org.gattolfo.engen.base.Entity;
-import org.gattolfo.engen.base.EntityListener;
-import org.gattolfo.engen.base.Family;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
 
 
 /**
  * Engene class, this is where it all starts
  */
-public class Engene  implements EntityListener {
+public class Engene    {
 
     @NotNull
     private OrthographicCamera camera;
@@ -22,70 +19,43 @@ public class Engene  implements EntityListener {
     @NotNull
     private SpriteBatch batch;
 
-    private List<Entity> entities;
-    private Set<Family> families;
-
-    private Map<Family, List<Entity>> familyEntities;
+    private Engine engine;
 
     public Engene(){
-        entities = new ArrayList<>();
-        families = new HashSet<>();
-        familyEntities = new HashMap<>();
+        engine = new Engine();
+        camera = new OrthographicCamera();
+        batch = new SpriteBatch();
+    }
+
+    public Engene(@NotNull OrthographicCamera camera, @NotNull SpriteBatch batch){
+        engine = new Engine();
+        this.camera = camera;
+        this.batch = batch;
     }
 
 
-    public void addEntity(Entity entity){
-        entities.add(entity);
-        entity.addListener(this);  // per ricevere notifiche di cambi
-        for (Family family : families) {
-            if (family.matches(entity)) {
-                familyEntities.computeIfAbsent(family, f -> new ArrayList<>()).add(entity);
-            }
-        }
-    }
-
-    public void removeEntity(Entity entity) {
-        entities.remove(entity);
-        for (List<Entity> list : familyEntities.values()) {
-            list.remove(entity);
-        }
-    }
-
-    public List<Entity> getEntitiesForFamily(Family family) {
-        families.add(family);
-        return familyEntities.computeIfAbsent(family, f -> {
-            List<Entity> matched = new ArrayList<>();
-            for (Entity e : entities) {
-                if (f.matches(e)) matched.add(e);
-            }
-            return matched;
-        });
-    }
-
-    @Override
-    public void onComponentAdded(Entity entity, Class<? extends Component> componentClass) {
-        for (Family family : families) {
-            boolean contains = familyEntities.getOrDefault(family, List.of()).contains(entity);
-            boolean matches = family.matches(entity);
-            if (!contains && matches) {
-                familyEntities.get(family).add(entity);
-            } else if (contains && !matches) {
-                familyEntities.get(family).remove(entity);
-            }
-        }
-    }
-
-    @Override
-    public void onComponentRemoved(Entity entity, Class<? extends Component> componentClass) {
-        onComponentAdded(entity, componentClass);
-    }
-
-    public OrthographicCamera getCamera() {
+    public @NotNull OrthographicCamera getCamera() {
         return camera;
     }
 
-    public SpriteBatch getBatch() {
+    public @NotNull SpriteBatch getBatch() {
         return batch;
+    }
+
+    public void addEntity(@NotNull Entity entity){
+        engine.addEntity(entity);
+    }
+
+    public void removeEntity(@NotNull Entity entity){
+        engine.removeEntity(entity);
+    }
+
+    public void addSystem(@NotNull EntitySystem system){
+        engine.addSystem(system);
+    }
+
+    public void removeSystem(@NotNull EntitySystem system){
+        engine.removeSystem(system);
     }
 
 }
