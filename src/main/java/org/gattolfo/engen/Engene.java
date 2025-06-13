@@ -13,34 +13,16 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Engene    {
 
-    @NotNull
-    private OrthographicCamera camera;
-
-    @NotNull
-    private SpriteBatch batch;
-
     private Engine engine;
 
     public Engene(){
         engine = new Engine();
-        camera = new OrthographicCamera();
-        batch = new SpriteBatch();
     }
 
     public Engene(@NotNull OrthographicCamera camera, @NotNull SpriteBatch batch){
         engine = new Engine();
-        this.camera = camera;
-        this.batch = batch;
     }
-
-
-    public @NotNull OrthographicCamera getCamera() {
-        return camera;
-    }
-
-    public @NotNull SpriteBatch getBatch() {
-        return batch;
-    }
+    
 
     public void addEntity(@NotNull Entity entity){
         engine.addEntity(entity);
@@ -58,4 +40,8 @@ public class Engene    {
         engine.removeSystem(system);
     }
 
+
+    public void update(float delta){
+        engine.update(delta);
+    }
 }
