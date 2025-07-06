@@ -133,6 +133,13 @@ public class TransformComponent implements Component {
         worldMatrix.getRotation(worldRotation, true);
         // worldScale (lossy) è facoltativo — si può calcolare se vuoi
 
+        // Calcolo approssimato dello scale
+        Vector3 lossyX = new Vector3(worldMatrix.val[Matrix4.M00], worldMatrix.val[Matrix4.M01], worldMatrix.val[Matrix4.M02]);
+        Vector3 lossyY = new Vector3(worldMatrix.val[Matrix4.M10], worldMatrix.val[Matrix4.M11], worldMatrix.val[Matrix4.M12]);
+        Vector3 lossyZ = new Vector3(worldMatrix.val[Matrix4.M20], worldMatrix.val[Matrix4.M21], worldMatrix.val[Matrix4.M22]);
+
+        worldScale.set(lossyX.len(), lossyY.len(), lossyZ.len());
+        
         isDirty = false;
     }
 
