@@ -1,66 +1,143 @@
 package org.gattolfo.engen.component;
 
 import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
-public class TransformComponent2D implements Component {
-    public final Vector2 localPosition = new Vector2();
-    public float localRotation = 0f;
-    public final Vector2 localScale = new Vector2(1f, 1f);
+public class TransformComponent implements Component {
 
-    // Globale (calcolato)
-    public final Vector2 worldPosition = new Vector2();
-    public float worldRotation = 0f;
-    public final Vector2 worldScale = new Vector2(1f, 1f);
+    // === Local Transform ===
+    private final Vector3 localPosition = new Vector3();
+    private final Quaternion localRotation = new Quaternion();
+    private final Vector3 localScale = new Vector3(1, 1, 1);
 
-    // Gerarchia
-    public Entity parent = null;
-    public final Array<Entity> children = new Array<>();
+    // === World Transform (calcolato) ===
+    private final Vector3 worldPosition = new Vector3();
+    private final Quaternion worldRotation = new Quaternion();
+    private final Vector3 worldScale = new Vector3(1, 1, 1); // optional
+    private final Matrix4 worldMatrix = new Matrix4();
 
-    public TransformComponent2D setLocalPosition(float x, float y) {
-        localPosition.set(x, y);
-        return this;
+    // === Gerarchia ===
+    private TransformComponent parent = null;
+    private final Array<TransformComponent> children = new Array<>();
+
+    // === Stato ===
+    private boolean isDirty = true;
+
+    // -------------------------------
+    // Accesso alle variabili locali
+    // -------------------------------
+    public Vector3 getLocalPosition() {
+        return localPosition;
     }
 
-    public TransformComponent2D setLocalRotation(float degrees) {
-        localRotation = degrees;
-        return this;
+    public Quaternion getLocalRotation() {
+        return localRotation;
     }
 
-    public TransformComponent2D setLocalScale(float x, float y) {
-        localScale.set(x, y);
-        return this;
+    public Vector3 getLocalScale() {
+        return localScale;
     }
 
-    public TransformComponent2D setParent(Entity newParent) {
+    public void setLocalPosition(Vector3 position) {
+        this.localPosition.set(position);
+        markDirty();
+    }
+
+    public void setLocalRotation(Quaternion rotation) {
+        this.localRotation.set(rotation);
+        markDirty();
+    }
+
+    public void setLocalScale(Vector3 scale) {
+        this.localScale.set(scale);
+        markDirty();
+    }
+
+    // -------------------------------
+    // Accesso alle variabili world
+    // -------------------------------
+    public Vector3 getWorldPosition() {
+        updateWorldTransformIfNeeded();
+        return worldPosition;
+    }
+
+    public Quaternion getWorldRotation() {
+        updateWorldTransformIfNeeded();
+        return worldRotation;
+    }
+
+    public Vector3 getWorldScale() {
+        updateWorldTransformIfNeeded();
+        return worldScale;
+    }
+
+    public Matrix4 getWorldMatrix() {
+        updateWorldTransformIfNeeded();
+        return worldMatrix;
+    }
+
+    // -------------------------------
+    // Gestione gerarchia
+    // -------------------------------
+    public void setParent(TransformComponent newParent) {
         if (this.parent != null) {
-            TransformComponent2D oldParentTransform = this.parent.getComponent(TransformComponent2D.class);
-            if (oldParentTransform != null) {
-                oldParentTransform.children.removeValue(thisEntity(), true);
-            }
+            this.parent.children.removeValue(this, true);
         }
         this.parent = newParent;
         if (newParent != null) {
-            TransformComponent2D parentTransform = newParent.getComponent(TransformComponent2D.class);
-            if (parentTransform != null) {
-                parentTransform.children.add(thisEntity());
-            }
+            newParent.children.add(this);
         }
-        return this;
+        markDirty();
     }
 
-    // Serve perché Ashley non passa l'entità al componente di default.
-    private Entity attachedEntity = null;
-
-    public void attachTo(Entity e) {
-        this.attachedEntity = e;
+    public TransformComponent getParent() {
+        return parent;
     }
 
-    public Entity thisEntity() {
-        return attachedEntity;
+    public Array<TransformComponent> getChildren() {
+        return children;
     }
 
+    // -------------------------------
+    // Dirty flag system
+    // -------------------------------
+    public void markDirty() {
+        if (isDirty) return;
+        isDirty = true;
+        for (TransformComponent child : children) {
+            child.markDirty();
+        }
+    }
 
+    public void updateWorldTransformIfNeeded() {
+        if (!isDirty) return;
+
+        Matrix4 localMatrix = new Matrix4()
+                .idt()
+                .translate(localPosition)
+                .rotate(localRotation)
+                .scale(localScale.x, localScale.y, localScale.z);
+
+        if (parent != null) {
+            parent.updateWorldTransformIfNeeded();
+            worldMatrix.set(parent.worldMatrix).mul(localMatrix);
+        } else {
+            worldMatrix.set(localMatrix);
+        }
+
+        // Estrai i valori
+        worldMatrix.getTranslation(worldPosition);
+        worldMatrix.getRotation(worldRotation, true);
+        // worldScale (lossy) è facoltativo — si può calcolare se vuoi
+
+        isDirty = false;
+    }
+
+    public boolean isDirty() {
+        return isDirty;
+    }
 }
+

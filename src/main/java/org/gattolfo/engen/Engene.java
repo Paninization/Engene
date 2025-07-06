@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Engene    {
 
+
+
     private Engine engine;
 
     public Engene(){
@@ -22,7 +24,7 @@ public class Engene    {
     public Engene(@NotNull OrthographicCamera camera, @NotNull SpriteBatch batch){
         engine = new Engine();
     }
-    
+
 
     public void addEntity(@NotNull Entity entity){
         engine.addEntity(entity);
@@ -34,6 +36,7 @@ public class Engene    {
 
     public void addSystem(@NotNull EntitySystem system){
         engine.addSystem(system);
+
     }
 
     public void removeSystem(@NotNull EntitySystem system){

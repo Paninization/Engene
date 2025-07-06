@@ -1,4 +1,4 @@
-package org.gattolfo.engen.system.helper;
+package org.gattolfo.engen.component.render;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.gattolfo.engen.component.TransformComponent;
