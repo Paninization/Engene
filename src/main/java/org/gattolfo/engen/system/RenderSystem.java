@@ -37,7 +37,7 @@ public class RenderSystem extends EntitySystem {
     public void update(float deltaTime) {
         camera.update();
         sortedEntities.clear();
-        sortedEntities.addAll(entities.toArray());
+        sortedEntities.addAll(entities.toArray(Entity.class));
         sortedEntities.sort((a, b) -> {
             TransformComponent ta = tm.get(a);
             TransformComponent tb = tm.get(b);
