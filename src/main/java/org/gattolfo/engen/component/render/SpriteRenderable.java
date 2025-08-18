@@ -15,7 +15,7 @@ public class SpriteRenderable implements Renderable {
     @Override
     public void render(SpriteBatch batch, TransformComponent transform, float deltaTime) {
         transform.updateWorldTransformIfNeeded();
-
+        sprite.setOriginCenter();
         sprite.setPosition(transform.getWorldPosition().x, transform.getWorldPosition().y);
         sprite.setRotation(transform.getWorldRotation().getAngleAround(Vector3.Z));
         sprite.setScale(transform.getWorldScale().x, transform.getWorldScale().y);

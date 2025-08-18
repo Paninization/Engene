@@ -57,7 +57,8 @@ publishing {
 
 
 jar{
-    archivesBaseName = 'engene'
+    archiveBaseName.set("engene")
+
     manifest {
         attributes 'Main-Class': 'org.gattolfo.engen.Main'
     }
