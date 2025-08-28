@@ -35,7 +35,8 @@ public class RenderSystem extends EntitySystem {
 
     @Override
     public void update(float deltaTime) {
-        camera.update();
+        //camera.updafte();
+
         sortedEntities.clear();
         sortedEntities.addAll(entities.toArray(Entity.class));
         sortedEntities.sort((a, b) -> {
